@@ -19,3 +19,9 @@ for (let i = 0; i < config.polygon.length; i++) {
             [0, 0, 0]);
     }
 }
+
+for (let i = 0; i < config.vertex_pos.length; i++) {
+    let point = config.vertex_pos[i];
+    let color = config.vertex_color[i];
+    func.drawVisualPoint(cxt, point[0], point[1], color);
+}

@@ -1,3 +1,5 @@
+import {canvasSize} from "./config.js"
+
 //该函数在一个canvas上绘制一个点
 //其中cxt是从canvas中获得的一个2d上下文context
 //    x,y分别是该点的横纵坐标
@@ -24,6 +26,27 @@ function drawPoint(cxt,x,y, color)
     cxt.stroke();
 }
 
+function distance(x1, y1, x2, y2){
+    return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+}
+
+function drawVisualPoint(cxt, x, y, color, radius=10, border=1)
+{
+    for (let j = y - radius; j <= y + radius; j++) {
+        if (j >= 0 && j < canvasSize.maxY){
+            for (let i = x-radius; i <= x + radius; i++) {
+                if (i >= 0 && i < canvasSize.maxX){
+                    let dst = distance(x, y, i, j);
+                    if (dst <= radius - 1)
+                        drawPoint(cxt, i, j, color);
+                    else if (dst <= radius && dst > radius - border)
+                        drawPoint(cxt, i, j, [0, 0, 0]);
+                }
+            }
+        }
+    }
+}
+
 //绘制线段的函数绘制一条从(x1,y1)到(x2,y2)的线段，cxt和color两个参数意义与绘制点的函数相同，
 function drawLine(cxt,x1,y1,x2,y2,color){
 
@@ -38,4 +61,4 @@ function drawLine(cxt,x1,y1,x2,y2,color){
     cxt.lineTo(x2, y2);
     cxt.stroke();
 }
-export {drawPoint, drawLine};
+export {drawPoint, drawLine, drawVisualPoint};
