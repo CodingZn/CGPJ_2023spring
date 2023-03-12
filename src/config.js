@@ -34,3 +34,5 @@ var polygon = [
     [3, 4, 7, 6],
     [4, 5, 8, 7]
 ];
+
+export {canvasSize, polygon, vertex_color, vertex_pos};
