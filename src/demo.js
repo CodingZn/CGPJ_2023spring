@@ -1,4 +1,3 @@
-import * as func from "./func.js";
 import * as config from "./config.js"
 import {mouseDownListener, mouseUpListener} from "./drag.js";
 import {drawAllLines, drawAllPoints} from "./func.js";

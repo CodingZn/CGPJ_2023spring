@@ -1,4 +1,4 @@
-import {distance, drawAllLines, drawAllPoints, drawVisualPoint} from "./func.js";
+import {distance, drawAllLines, drawAllPoints} from "./func.js";
 import * as config from "./config.js";
 
 var c=document.getElementById("myCanvas");
@@ -8,10 +8,10 @@ var cxt=c.getContext("2d");
 var ondrag = null;
 
 //给定鼠标坐标，根据范围选择点；返回点的下标。如果没有点被选中，返回null。
-//如果有多个点在范围内，优先选择下标最小的点。
+//如果有多个点在范围内，优先选择下标最大的点。
 function selectPoint(mouse_pos, vertex_pos, radius=10){
     let p;
-    for (p = 0; p < vertex_pos.length; p++) {
+    for (p = vertex_pos.length - 1; p >= 0; p--) {
         let point = vertex_pos[p];
         if (distance(point[0], point[1], mouse_pos[0], mouse_pos[1]) <= radius)
             return p;
@@ -24,7 +24,7 @@ function mouseDownListener(event){
     ondrag = selectPoint([event.offsetX, event.offsetY], config.vertex_pos);
     console.log(ondrag);
     //选中某点
-    if(ondrag){
+    if(ondrag != null){
         c.onmousemove = dragPoint;
     }
 }
@@ -32,7 +32,7 @@ function mouseDownListener(event){
 function mouseUpListener(event){
     console.log(ondrag);
     //放开某点
-    if(ondrag){
+    if(ondrag != null){
         c.onmousemove = null;
         ondrag = null;
     }
