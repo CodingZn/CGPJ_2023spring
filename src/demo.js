@@ -1,6 +1,7 @@
 import * as func from "./func.js";
 import * as config from "./config.js"
 import {mouseDownListener, mouseUpListener} from "./drag.js";
+import {drawAllLines, drawAllPoints} from "./func.js";
 
 var c=document.getElementById("myCanvas");
 var cxt=c.getContext("2d");
@@ -10,22 +11,9 @@ cxt.translate(0.5, 0.5);
 c.width = config.canvasSize.maxX;
 c.height = config.canvasSize.maxY;
 
-for (let i = 0; i < config.polygon.length; i++) {
-    let rect = config.polygon[i];
-    for (let j = 0; j < 4; j++) {
-        let startPointIndex = rect[j%4];
-        let endPointIndex = rect[(j+1)%4];
-        func.drawLine(cxt, config.vertex_pos[startPointIndex][0], config.vertex_pos[startPointIndex][1],
-            config.vertex_pos[endPointIndex][0], config.vertex_pos[endPointIndex][1],
-            [0, 0, 0]);
-    }
-}
+drawAllLines(cxt, config.polygon, config.vertex_pos);
+drawAllPoints(cxt, config.vertex_pos, config.vertex_color);
 
-for (let i = 0; i < config.vertex_pos.length; i++) {
-    let point = config.vertex_pos[i];
-    let color = config.vertex_color[i];
-    func.drawVisualPoint(cxt, point[0], point[1], color);
-}
 
 c.onmousedown = mouseDownListener;
 c.onmouseup = mouseUpListener;

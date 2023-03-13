@@ -47,6 +47,14 @@ function drawVisualPoint(cxt, x, y, color, radius=10, border=1)
     }
 }
 
+function drawAllPoints(cxt, vertex_pos, vertex_color) {
+    for (let i = 0; i < vertex_pos.length; i++) {
+        let point = vertex_pos[i];
+        let color = vertex_color[i];
+        drawVisualPoint(cxt, point[0], point[1], color);
+    }
+}
+
 //绘制线段的函数绘制一条从(x1,y1)到(x2,y2)的线段，cxt和color两个参数意义与绘制点的函数相同，
 function drawLine(cxt,x1,y1,x2,y2,color){
 
@@ -61,4 +69,18 @@ function drawLine(cxt,x1,y1,x2,y2,color){
     cxt.lineTo(x2, y2);
     cxt.stroke();
 }
-export {drawPoint, drawLine, drawVisualPoint, distance};
+
+function drawAllLines(cxt, polygon, vertex_pos){
+    for (let i = 0; i < polygon.length; i++) {
+        let rect = polygon[i];
+        for (let j = 0; j < 4; j++) {
+            let startPointIndex = rect[j%4];
+            let endPointIndex = rect[(j+1)%4];
+            drawLine(cxt, vertex_pos[startPointIndex][0], vertex_pos[startPointIndex][1],
+                vertex_pos[endPointIndex][0], vertex_pos[endPointIndex][1],
+                [0, 0, 0]);
+        }
+    }
+}
+
+export {drawPoint, drawLine, drawVisualPoint, distance, drawAllPoints, drawAllLines};

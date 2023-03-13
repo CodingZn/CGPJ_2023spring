@@ -1,5 +1,5 @@
-import {distance, drawVisualPoint} from "./func.js";
-import {vertex_pos, vertex_color} from "./config.js";
+import {distance, drawAllLines, drawAllPoints, drawVisualPoint} from "./func.js";
+import * as config from "./config.js";
 
 var c=document.getElementById("myCanvas");
 var cxt=c.getContext("2d");
@@ -21,7 +21,7 @@ function selectPoint(mouse_pos, vertex_pos, radius=10){
 
 function mouseDownListener(event){
     console.log("mousedown");
-    ondrag = selectPoint([event.offsetX, event.offsetY], vertex_pos);
+    ondrag = selectPoint([event.offsetX, event.offsetY], config.vertex_pos);
     console.log(ondrag);
     //选中某点
     if(ondrag){
@@ -42,10 +42,12 @@ function mouseUpListener(event){
 //拖拽一个点的事件函数
 function dragPoint(event){
     //更新点坐标
-    vertex_pos[ondrag] = [event.offsetX, event.offsetY, 0];
+    config.vertex_pos[ondrag] = [event.offsetX, event.offsetY, 0];
 
-    //重新画点
-    drawVisualPoint(cxt, vertex_pos[ondrag][0], vertex_pos[ondrag][1], vertex_color[ondrag])
+    //重新画
+    cxt.clearRect(0, 0, c.width, c.height);
+    drawAllLines(cxt, config.polygon, config.vertex_pos);
+    drawAllPoints(cxt, config.vertex_pos, config.vertex_color);
 }
 
 export {mouseDownListener, mouseUpListener};
