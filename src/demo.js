@@ -1,5 +1,6 @@
 import * as func from "./func.js";
 import * as config from "./config.js"
+import {mouseDownListener, mouseUpListener} from "./drag.js";
 
 var c=document.getElementById("myCanvas");
 var cxt=c.getContext("2d");
@@ -25,3 +26,6 @@ for (let i = 0; i < config.vertex_pos.length; i++) {
     let color = config.vertex_color[i];
     func.drawVisualPoint(cxt, point[0], point[1], color);
 }
+
+c.onmousedown = mouseDownListener;
+c.onmouseup = mouseUpListener;

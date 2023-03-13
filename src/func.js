@@ -61,4 +61,4 @@ function drawLine(cxt,x1,y1,x2,y2,color){
     cxt.lineTo(x2, y2);
     cxt.stroke();
 }
-export {drawPoint, drawLine, drawVisualPoint};
+export {drawPoint, drawLine, drawVisualPoint, distance};
