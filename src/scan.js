@@ -1,3 +1,4 @@
+console.log("111");
 class Edge{
     //通过两点坐标设置边，y1 != y2
     constructor(x1, y1, x2, y2) {
@@ -21,7 +22,7 @@ class YEntry{
         //y不可改变
         this.y = y;
         //链表指向下一个yEntry
-        this.nexty = nexty;
+        this.next = nexty;
         //y对应的边的链表头部
         this.edges = edges;
     }
@@ -83,7 +84,42 @@ class EdgeTable{
         this.head = null;
     }
 
-    init(edges){
+    addEntry(entry){
+        if (this.head == null){
+            this.head = entry;
+            return;
+        }
+        let e = this.head;
+        if (entry.y < e.y){
+            this.head = entry;
+            entry.next = e;
+            return;
+        }
+        let e_next;
+        while (e != null){// entry.y >= e.y
+            e_next = e.next;
+            if (entry.y === e.y){
+                return;
+            }
+            else if (e_next == null || entry.y < e_next.y){
+                //insert
+                e.next = entry;
+                entry.next = e_next;
+                return;
+            }
+            e = e.next;
+        }
+    }
+
+    addEdge(edge){
+        let y = edge.ymin;
+        let entry = this.head;
+        while(entry != null){
+
+        }
+    }
+
+    init(edgeArray){
 
     }
 
@@ -92,3 +128,14 @@ class EdgeTable{
     }
 
 }
+
+function scanAPolygon(cxt, vertex_array, color){
+    var edgeTable = new EdgeTable();
+
+}
+
+function scanAllPolygon(cxt, polygon, vertex_pos, vertex_color){
+
+}
+
+export {scanAllPolygon};
