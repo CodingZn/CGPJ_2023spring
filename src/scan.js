@@ -86,7 +86,7 @@ class EdgeTable{
 
     addEntry(entry){
         if (this.head == null){
-            this.head = entry;
+            this.head = entry;console.log(entry);
             return;
         }
         let e = this.head;
@@ -113,6 +113,10 @@ class EdgeTable{
 
     addEdge(edge){
         let y = edge.ymin;
+        if (this.head == null){
+            this.addEntry(new YEntry(y, null, edge));
+            return;
+        }
         let entry_tmp = this.head;
         if (y < entry_tmp.y){
             this.addEntry(new YEntry(y, null, edge));
@@ -153,13 +157,20 @@ function scanAPolygon(cxt, vertex_array, color){
         if (start_point[1] === end_point[1])//略过水平线
             continue;
         let edge = new Edge(start_point[0], start_point[1], end_point[0], end_point[1]);
+        console.log(edge);
         edgeTable.addEdge(edge);
+        console.log(edgeTable);
     }
-    console.log(edgeTable);
 }
 
 function scanAllPolygon(cxt, polygon, vertex_pos, vertex_color){
-
+    let vertex_array = [];
+    for (let i = 0; i < polygon[0].length; i++) {
+        vertex_array.push(vertex_pos[polygon[0][i]]);
+    }
+    console.log("vertex array:");
+    console.log(vertex_array);
+    scanAPolygon(cxt, vertex_array, vertex_color[polygon[0][0]]);
 }
 
-export {scanAllPolygon};
+export {scanAPolygon, scanAllPolygon};

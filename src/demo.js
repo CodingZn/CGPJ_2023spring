@@ -1,6 +1,8 @@
 import * as config from "./config.js"
 import {mouseDownListener, mouseUpListener} from "./drag.js";
 import {drawAllLines, drawAllPoints} from "./func.js";
+import {scanAllPolygon, scanAPolygon} from "./scan.js";
+import {polygon, vertex_color, vertex_pos} from "./config.js";
 
 var c=document.getElementById("myCanvas");
 var cxt=c.getContext("2d");
@@ -12,7 +14,7 @@ c.height = config.canvasSize.maxY;
 
 drawAllLines(cxt, config.polygon, config.vertex_pos);
 drawAllPoints(cxt, config.vertex_pos, config.vertex_color);
-
+scanAllPolygon(cxt, polygon, vertex_pos, vertex_color);
 
 c.onmousedown = mouseDownListener;
 c.onmouseup = mouseUpListener;
