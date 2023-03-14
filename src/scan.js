@@ -55,7 +55,7 @@ class YEntry{
         }
     }
 
-    //以下步骤需按序进行！
+    //以下步骤在EdgeTable::fill()中被调用，需按序进行！
     //将参数entry中的边按x升序合并到本entry中
     mergeWith(yEntry){
 
@@ -139,17 +139,14 @@ class EdgeTable{
         }
     }
 
-    init(edgeArray){
-
-    }
-
-    fill(){
+    fill(color){
 
     }
 
 }
 
 function scanAPolygon(cxt, vertex_array, color){
+    // set edgeTable
     var edgeTable = new EdgeTable();
     let n = vertex_array.length;
     for (let i = 0; i < n; i++) {
@@ -157,10 +154,10 @@ function scanAPolygon(cxt, vertex_array, color){
         if (start_point[1] === end_point[1])//略过水平线
             continue;
         let edge = new Edge(start_point[0], start_point[1], end_point[0], end_point[1]);
-        console.log(edge);
         edgeTable.addEdge(edge);
-        console.log(edgeTable);
     }
+    // fill
+    edgeTable.fill(color);
 }
 
 function scanAllPolygon(cxt, polygon, vertex_pos, vertex_color){
