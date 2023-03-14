@@ -28,8 +28,32 @@ class YEntry{
 
     //按x升序插入一条边
     addEdge(edge){
-
+        if (this.edges==null){
+            this.edges=edge;
+        }
+        else{
+            let e = this.edges;
+            let e_next = e.next;
+            if (edge.x_ymin <= e.x_ymin){
+                // insert
+                edge.next = e;
+                this.edges = edge;
+                return;
+            }
+            while (e_next != null){
+                if (e.x_ymin <= edge.x_ymin && edge.x_ymin <= e_next.x_ymin){
+                    // insert
+                    e.next = edge;
+                    edge.next = e_next;
+                    return;
+                }
+                e = e.next;
+                e_next = e_next.next;
+            }
+            e.next = edge;
+        }
     }
+
     //以下步骤需按序进行！
     //将参数entry中的边按x升序合并到本entry中
     mergeWith(yEntry){
@@ -68,4 +92,3 @@ class EdgeTable{
     }
 
 }
-
