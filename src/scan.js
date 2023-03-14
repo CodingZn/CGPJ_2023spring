@@ -19,7 +19,6 @@ class Edge{
 
 class YEntry{
     constructor(y, next=null, edges=null) {
-        //y不可改变
         this.y = y;
         //链表指向下一个yEntry
         this.next = next;
@@ -56,11 +55,15 @@ class YEntry{
     }
 
     //以下步骤在EdgeTable::fill()中被调用，需按序进行！
-    //将参数entry中的边按x升序合并到本entry中
+    //将参数entry中的边按序合并到本entry中（要求本entry必须有序）
     mergeWith(yEntry){
-
+        if (yEntry.edges == null)
+            return;
+        for (let e = yEntry.edges; e != null; e = e.next) {
+            this.addEdge(e);
+        }
     }
-    //对所有的edge按从x小到大排序（没用？
+    //对所有的edge按从x小到大排序
     sortByX(){
 
     }
@@ -82,9 +85,23 @@ class YEntry{
 class EdgeTable{
     constructor() {
         this.head = null;
+        this.YMax = -1;
+        this.YMin = 999999;
     }
 
     addEntry(entry){
+        //update Ymax/Ymin
+        if (entry.edges != null){
+            let e = entry.edges;
+            while (e != null){
+                if (e.ymin < this.YMin)
+                    this.YMin = e.ymin;
+                if (e.ymax > this.YMax)
+                    this.YMax = e.ymax;
+                e = e.next;
+            }
+        }
+        //add entry
         if (this.head == null){
             this.head = entry;console.log(entry);
             return;
@@ -112,6 +129,16 @@ class EdgeTable{
     }
 
     addEdge(edge){
+        //update Ymax/Ymin
+        let e = edge;
+        while (e != null){
+            if (e.ymin < this.YMin)
+                this.YMin = e.ymin;
+            if (e.ymax > this.YMax)
+                this.YMax = e.ymax;
+            e = e.next;
+        }
+        //add edge
         let y = edge.ymin;
         if (this.head == null){
             this.addEntry(new YEntry(y, null, edge));
@@ -139,8 +166,35 @@ class EdgeTable{
         }
     }
 
-    fill(color){
+    //return the entry with y. if not exist, create an empty entry with y
+    findEntry(y){
+        let e = this.head;
+        while (e != null){
+            if (e.y === y)
+                return e;
+            e = e.next;
+        }
+        return new YEntry(y);
+    }
 
+    fill(color){
+        console.log("filling");
+        let scanningLineY = this.YMin;
+        let activeEdgeTable = new YEntry(scanningLineY);
+        for (; scanningLineY <= this.YMax; scanningLineY++){
+            //合并表项，同时按照x递增排序
+            let oldAET = activeEdgeTable;
+            activeEdgeTable = this.findEntry(scanningLineY);
+            activeEdgeTable.mergeWith(oldAET);
+            //填充本扫描线
+            activeEdgeTable.fillScanLine();
+
+            activeEdgeTable.delEdgeByYmax();
+
+            activeEdgeTable.updateX();
+            //更新扫描y坐标值
+            activeEdgeTable.y += 1;
+        }
     }
 
 }
