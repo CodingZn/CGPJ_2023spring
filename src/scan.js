@@ -1,4 +1,4 @@
-console.log("111");
+
 class Edge{
     //通过两点坐标设置边，y1 != y2
     constructor(x1, y1, x2, y2) {
@@ -18,11 +18,11 @@ class Edge{
 }
 
 class YEntry{
-    constructor(y, nexty=null, edges=null) {
+    constructor(y, next=null, edges=null) {
         //y不可改变
         this.y = y;
         //链表指向下一个yEntry
-        this.next = nexty;
+        this.next = next;
         //y对应的边的链表头部
         this.edges = edges;
     }
@@ -113,9 +113,25 @@ class EdgeTable{
 
     addEdge(edge){
         let y = edge.ymin;
-        let entry = this.head;
-        while(entry != null){
-
+        let entry_tmp = this.head;
+        if (y < entry_tmp.y){
+            this.addEntry(new YEntry(y, null, edge));
+            return;
+        }
+        let entry_tmp_next;
+        while(entry_tmp != null){//entry_tmp.y <= y
+            entry_tmp_next = entry_tmp.next;
+            if (entry_tmp.y === y){
+                entry_tmp.addEdge(edge);
+                return;
+            }
+            else if (entry_tmp_next == null || y < entry_tmp_next.y){//entry_tmp.y < y < entry_tmp_next.y
+                let entry_new = new YEntry(y, null, edge);
+                entry_tmp.next = entry_new;
+                entry_new.next = entry_tmp_next;
+                return;
+            }
+            entry_tmp = entry_tmp.next;
         }
     }
 
@@ -131,7 +147,15 @@ class EdgeTable{
 
 function scanAPolygon(cxt, vertex_array, color){
     var edgeTable = new EdgeTable();
-
+    let n = vertex_array.length;
+    for (let i = 0; i < n; i++) {
+        let start_point = vertex_array[i%n], end_point = vertex_array[(i+1)%n];
+        if (start_point[1] === end_point[1])//略过水平线
+            continue;
+        let edge = new Edge(start_point[0], start_point[1], end_point[0], end_point[1]);
+        edgeTable.addEdge(edge);
+    }
+    console.log(edgeTable);
 }
 
 function scanAllPolygon(cxt, polygon, vertex_pos, vertex_color){
