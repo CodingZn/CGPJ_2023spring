@@ -30,6 +30,7 @@ function distance(x1, y1, x2, y2){
     return Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
 }
 
+//绘制可视点（手柄），可自定义绘制半径和边界厚度
 function drawVisualPoint(cxt, x, y, color, radius=10, border=1)
 {
     for (let j = y - radius; j <= y + radius; j++) {
@@ -47,6 +48,7 @@ function drawVisualPoint(cxt, x, y, color, radius=10, border=1)
     }
 }
 
+//绘制配置文件中的所有点
 function drawAllPoints(cxt, vertex_pos, vertex_color) {
     for (let i = 0; i < vertex_pos.length; i++) {
         let point = vertex_pos[i];
@@ -55,7 +57,7 @@ function drawAllPoints(cxt, vertex_pos, vertex_color) {
     }
 }
 
-//绘制线段的函数绘制一条从(x1,y1)到(x2,y2)的线段，cxt和color两个参数意义与绘制点的函数相同，
+//绘制一条从(x1,y1)到(x2,y2)的线段，cxt和color两个参数意义与绘制点的函数相同，
 function drawLine(cxt,x1,y1,x2,y2,color){
 
     cxt.beginPath();
@@ -70,6 +72,7 @@ function drawLine(cxt,x1,y1,x2,y2,color){
     cxt.stroke();
 }
 
+//绘制配置文件中的所有线
 function drawAllLines(cxt, polygon, vertex_pos){
     for (let i = 0; i < polygon.length; i++) {
         let poly = polygon[i];

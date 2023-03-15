@@ -1,5 +1,6 @@
 import {drawLine} from "./func.js";
 
+//边的结构，可看做链表结点
 class Edge{
     //通过两点坐标设置边，y1 != y2
     constructor(x1, y1, x2, y2) {
@@ -17,6 +18,7 @@ class Edge{
         this.next = null;
     }
 
+    //返回该对象的浅拷贝，next属性为null
     singleClone(){
         let e = new Edge(0, 0, 1, 1);
         e.ymin = this.ymin;
@@ -28,6 +30,8 @@ class Edge{
     }
 }
 
+//边表中表示特定纵坐标值的条目。也可用作活跃边表
+//可看做一个带属性的一维链表，也可看做二维链表的一个条目
 class YEntry{
     constructor(y, next=null, edges=null) {
         this.y = y;
@@ -37,6 +41,7 @@ class YEntry{
         this.edges = edges;
     }
 
+    //返回该对象的拷贝，其中edges是拷贝的链表，next为null
     singleClone(){
         let e = new YEntry(this.y);
         // clone edges
@@ -48,7 +53,7 @@ class YEntry{
         return e;
     }
 
-    //按x升序插入一条边
+    //按x_ymin属性升序插入一条边edge，不考虑edge指向的边
     addEdge(edge){
         if (this.edges==null){
             this.edges=edge;
@@ -76,6 +81,7 @@ class YEntry{
         }
     }
 
+    //将一条边edge插入到末尾，不考虑顺序
     addToTail(edge){
         if (this.edges==null){
             this.edges=edge;
@@ -89,7 +95,8 @@ class YEntry{
     }
 
     //以下步骤在EdgeTable::fill()中被调用，需按序进行！
-    //将参数entry中的边按序合并到本entry中（要求本entry必须有序）
+
+    //将参数entry中的边的拷贝按序合并到本entry中（要求本entry必须有序，因而合并完也是有序的）
     mergeWith(yEntry){
         if (yEntry.edges == null)
             return;
@@ -101,21 +108,22 @@ class YEntry{
     }
     //对所有的edge按从x小到大排序
     sortByX(){
-
+        //用不到了，其余步骤即可维护有序性
     }
-    //填充当前一行
+    //填充本entry对应的一行
     fillScanLine(cxt, color){
         let x_s = [];
         let e = this.edges;
+        //获取所有边与扫描线的交点横坐标
         while (e != null){
             x_s.push(e.x_ymin);
             e = e.next;
         }
-        for (let i = 0; i < x_s.length; i += 2){
+        for (let i = 0; i < x_s.length; i += 2){//在每对交点之间进行填充（要求交点为偶数个）
             drawLine(cxt, x_s[i], this.y, x_s[i+1], this.y, color);
         }
     }
-    //删除已经无交点的边（ymax=y）
+    //删除已经无交点的边（需在填充之后使用，此时ymax=y）
     delEdgeByYmax(){
         let e = this.edges, e_last;
         while (e === this.edges && e != null){
@@ -135,7 +143,7 @@ class YEntry{
             e = e.next;
         }
     }
-    //更新交点x为下一条扫描线的交点: x = x + m
+    //更新交点x为下一条扫描线的交点: x = x + m，更新后认为此entry无序
     updateX(){
         for (let e=this.edges; e != null; e=e.next){
             e.x_ymin = e.x_ymin + e.m;
@@ -144,13 +152,20 @@ class YEntry{
 
 }
 
+//边表。对应一个多边形
+//是一个二维链表结构。直接维护YEntry链表，而每个YEntry又是一个链表
 class EdgeTable{
     constructor() {
+        //entry链表的开头项
         this.head = null;
+        //包含的所有边的最值
         this.YMax = -1;
         this.YMin = 999999;
     }
 
+    //插入有特征值y的entry
+    //调用者需保证表中没有以y为特征值的entry
+    //若对应的y值entry已存在，则不会插入
     addEntry(entry){
         //update Ymax/Ymin
         if (entry.edges != null){
@@ -190,6 +205,7 @@ class EdgeTable{
         }
     }
 
+    //插入一条边，按照ymin归类到对应entry，且维持entry中x_ymin的升序排列。如无对应entry，会在表中创建。
     addEdge(edge){
         //update Ymax/Ymin
         let e = edge;
@@ -240,30 +256,35 @@ class EdgeTable{
         return new YEntry(y);
     }
 
+    //对此边表表示的多边形进行填充
     fill(cxt, color){
-
+        //扫描线的纵坐标值
         let scanningLineY = this.YMin;
+        //活动边表（AET），用链表维护当前与扫描线相交的边
         let activeEdgeTable = new YEntry(scanningLineY);
-        for (; scanningLineY <= this.YMax; scanningLineY++){
-            //合并表项，同时按照x递增排序
+        for (; scanningLineY <= this.YMax;){
+            //合并表项，同时按照x递增排序。
+            //旧的AET不保证有序
             let oldAET = activeEdgeTable.singleClone();
+            //在边表中获取当前扫描线对应的边表，作为新的AET（等价于将有序新边加入新AET）
             activeEdgeTable = this.findEntry(scanningLineY);
+            //将旧边加入新AET，顺便维护了顺序。
             activeEdgeTable.mergeWith(oldAET);
             //填充本扫描线
             activeEdgeTable.fillScanLine(cxt, color);
-
+            //删除已经无交点的边
             activeEdgeTable.delEdgeByYmax();
-
-            activeEdgeTable.updateX();
-
-            //更新扫描y坐标值
+            //更新扫描y坐标值，同时更新交点横坐标
+            scanningLineY += 1;
             activeEdgeTable.y += 1;
-
+            activeEdgeTable.updateX();
+            //此时AET已经无序
         }
     }
 
 }
 
+// 扫描填充一个多边形
 function scanAPolygon(cxt, vertex_array, color){
     // set edgeTable
     var edgeTable = new EdgeTable();
@@ -276,11 +297,12 @@ function scanAPolygon(cxt, vertex_array, color){
         let edge = new Edge(start_point[0], start_point[1], end_point[0], end_point[1]);
         edgeArray.push(edge);
     }
+    //两线相交，扫描线穿过顶点。若扫描线穿过图形内外两侧，需调整使其只算一个交点
     for (let i = 0; i < edgeArray.length; i++) {
         let edge1 = edgeArray[i%edgeArray.length], edge2 = edgeArray[(i+1)%edgeArray.length];
         if (edge1.ymin === edge2.ymax){// 扫描线穿过内外两侧，将y值低的一边ymax减一
             edge2.ymax--;
-            if (edge2.ymax === edge2.ymin){// 剔除掉经过调整之后变平行了的边
+            if (edge2.ymax === edge2.ymin){// 剔除掉经过调整之后变水平了的边
                 let i = edgeArray.indexOf(edge2);
                 edgeArray.splice(i, 1);
             }
@@ -294,13 +316,15 @@ function scanAPolygon(cxt, vertex_array, color){
             }
         }
     }
+    //加入边表
     for (let i = 0; i < edgeArray.length; i++) {
         edgeTable.addEdge(edgeArray[i]);
     }
-    // fill
+    //填充
     edgeTable.fill(cxt, color);
 }
 
+// 填充扫描所有多边形
 function scanAllPolygon(cxt, polygon, vertex_pos, vertex_color){
     for (let j = 0; j < polygon.length; j++) {
         let vertex_array = [];

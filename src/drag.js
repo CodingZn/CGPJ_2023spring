@@ -1,7 +1,6 @@
 import {distance, drawAllLines, drawAllPoints} from "./func.js";
 import * as config from "./config.js";
 import {scanAllPolygon} from "./scan.js";
-import {polygon, vertex_color, vertex_pos} from "./config.js";
 
 var c=document.getElementById("myCanvas");
 var cxt=c.getContext("2d");
@@ -41,7 +40,7 @@ function mouseUpListener(event){
 }
 
 
-//拖拽一个点的事件函数
+//拖拽一个点的事件函数，在拖拽整个过程中始终执行
 function dragPoint(event){
     //不允许出界
     if (event.offsetX >= 0 && event.offsetY >= 0 &&
@@ -49,7 +48,7 @@ function dragPoint(event){
         //更新点坐标
         config.vertex_pos[ondrag] = [event.offsetX, event.offsetY, 0];
 
-        //重新画
+        //重新绘制整幅图像
         cxt.clearRect(0, 0, c.width, c.height);
         scanAllPolygon(cxt, config.polygon, config.vertex_pos, config.vertex_color);
         drawAllLines(cxt, config.polygon, config.vertex_pos);
