@@ -94,9 +94,11 @@ class YEntry{
         if (yEntry.edges == null)
             return;
         // return;
-        for (let e = yEntry.edges; e != null; e = e.next) {console.log(this);
+        for (let e = yEntry.edges; e != null; e = e.next) {
             this.addEdge(e.singleClone());
         }
+        console.log("afterMerge, newAET=")
+        console.log(this);
     }
     //对所有的edge按从x小到大排序
     sortByX(){
@@ -117,7 +119,7 @@ class YEntry{
     //删除已经无交点的边（ymax=y）
     delEdgeByYmax(){console.log("delEdgeByYmax")
         let e = this.edges, e_last;
-        while (e === this.edges){
+        while (e === this.edges && e != null){
             if (e.ymax === this.y){
                 this.edges = e.next;
             }
@@ -243,7 +245,7 @@ class EdgeTable{
         console.log("filling");
         let scanningLineY = this.YMin;
         let activeEdgeTable = new YEntry(scanningLineY);
-        for (; scanningLineY <= this.YMax; scanningLineY++){console.log("scan:" + scanningLineY);
+        for (; scanningLineY <= this.YMax; scanningLineY++){console.log("");console.log("scan:" + scanningLineY );
             //合并表项，同时按照x递增排序
             let oldAET = activeEdgeTable.singleClone();console.log("oldAET");console.log(oldAET);
             activeEdgeTable = this.findEntry(scanningLineY);console.log("newAET:");console.log(activeEdgeTable);
@@ -252,8 +254,9 @@ class EdgeTable{
             activeEdgeTable.fillScanLine(cxt, color);
 
             activeEdgeTable.delEdgeByYmax();
-
+            console.log("AET:");console.log(activeEdgeTable);
             activeEdgeTable.updateX();
+            console.log("AET:");console.log(activeEdgeTable);
             //更新扫描y坐标值
             activeEdgeTable.y += 1;
 
