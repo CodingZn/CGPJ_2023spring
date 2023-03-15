@@ -66,7 +66,7 @@ function drawLine(cxt,x1,y1,x2,y2,color){
         +color[2] + "," +
         +255 + ")" ;
     //这里线宽取1会有色差，但是类似半透明的效果有利于debug，取2效果较好
-    cxt.lineWidth =1;
+    cxt.lineWidth =2;
     cxt.moveTo(x1, y1);
     cxt.lineTo(x2, y2);
     cxt.stroke();
