@@ -1,3 +1,4 @@
+import {drawLine} from "./func.js";
 
 class Edge{
     //通过两点坐标设置边，y1 != y2
@@ -15,6 +16,16 @@ class Edge{
         this.m = (x1-x2)/(y1-y2);
         this.next = null;
     }
+
+    singleClone(){
+        let e = new Edge(0, 0, 1, 1);
+        e.ymin = this.ymin;
+        e.ymax = this.ymax;
+        e.x_ymin = this.x_ymin;
+        e.m = this.m;
+        e.next = null;
+        return e;
+    }
 }
 
 class YEntry{
@@ -24,6 +35,17 @@ class YEntry{
         this.next = next;
         //y对应的边的链表头部
         this.edges = edges;
+    }
+
+    singleClone(){
+        let e = new YEntry(this.y);
+        // clone edges
+        let edg = this.edges;
+        while(edg != null){
+            e.addToTail(edg.singleClone());
+            edg = edg.next;
+        }
+        return e;
     }
 
     //按x升序插入一条边
@@ -54,13 +76,26 @@ class YEntry{
         }
     }
 
+    addToTail(edge){
+        if (this.edges==null){
+            this.edges=edge;
+            return;
+        }
+        let e = this.edges;
+        while (e.next != null){
+            e = e.next;
+        }
+        e.next = edge;
+    }
+
     //以下步骤在EdgeTable::fill()中被调用，需按序进行！
     //将参数entry中的边按序合并到本entry中（要求本entry必须有序）
-    mergeWith(yEntry){
+    mergeWith(yEntry){console.log("mergeWith:");console.log(yEntry);
         if (yEntry.edges == null)
             return;
-        for (let e = yEntry.edges; e != null; e = e.next) {
-            this.addEdge(e);
+        // return;
+        for (let e = yEntry.edges; e != null; e = e.next) {console.log(this);
+            this.addEdge(e.singleClone());
         }
     }
     //对所有的edge按从x小到大排序
@@ -68,16 +103,42 @@ class YEntry{
 
     }
     //填充当前一行
-    fillScanLine(){
-
+    fillScanLine(cxt, color){console.log("fillScanLine")
+        let x_s = [];
+        let e = this.edges;
+        while (e != null){
+            x_s.push(e.x_ymin);
+            e = e.next;
+        }
+        for (let i = 0; i < x_s.length; i += 2){
+            drawLine(cxt, x_s[i], this.y, x_s[i+1], this.y, color);
+        }
     }
     //删除已经无交点的边（ymax=y）
-    delEdgeByYmax(){
-
+    delEdgeByYmax(){console.log("delEdgeByYmax")
+        let e = this.edges, e_last;
+        while (e === this.edges){
+            if (e.ymax === this.y){
+                this.edges = e.next;
+            }
+            e = e.next;
+        }
+        e_last = this.edges;
+        while (e != null){
+            if (e.ymax === this.y){
+                e_last.next = e.next;
+            }
+            else{
+                e_last = e;
+            }
+            e = e.next;
+        }
     }
-    //更新交点x为下一条扫描线的交点
-    updateX(){
-
+    //更新交点x为下一条扫描线的交点: x = x + m
+    updateX(){console.log("updateX")
+        for (let e=this.edges; e != null; e=e.next){
+            e.x_ymin = e.x_ymin + e.m;
+        }
     }
 
 }
@@ -166,34 +227,36 @@ class EdgeTable{
         }
     }
 
-    //return the entry with y. if not exist, create an empty entry with y
-    findEntry(y){
+    //return the copied entry with y. if not exist, create an empty entry with y
+    findEntry(y){ console.log("findEntry:" + y);
         let e = this.head;
         while (e != null){
-            if (e.y === y)
-                return e;
+            if (e.y === y){
+                return e.singleClone();
+            }
             e = e.next;
         }
         return new YEntry(y);
     }
 
-    fill(color){
+    fill(cxt, color){
         console.log("filling");
         let scanningLineY = this.YMin;
         let activeEdgeTable = new YEntry(scanningLineY);
-        for (; scanningLineY <= this.YMax; scanningLineY++){
+        for (; scanningLineY <= this.YMax; scanningLineY++){console.log("scan:" + scanningLineY);
             //合并表项，同时按照x递增排序
-            let oldAET = activeEdgeTable;
-            activeEdgeTable = this.findEntry(scanningLineY);
+            let oldAET = activeEdgeTable.singleClone();console.log("oldAET");console.log(oldAET);
+            activeEdgeTable = this.findEntry(scanningLineY);console.log("newAET:");console.log(activeEdgeTable);
             activeEdgeTable.mergeWith(oldAET);
             //填充本扫描线
-            activeEdgeTable.fillScanLine();
+            activeEdgeTable.fillScanLine(cxt, color);
 
             activeEdgeTable.delEdgeByYmax();
 
             activeEdgeTable.updateX();
             //更新扫描y坐标值
             activeEdgeTable.y += 1;
+
         }
     }
 
@@ -211,7 +274,7 @@ function scanAPolygon(cxt, vertex_array, color){
         edgeTable.addEdge(edge);
     }
     // fill
-    edgeTable.fill(color);
+    edgeTable.fill(cxt, color);
 }
 
 function scanAllPolygon(cxt, polygon, vertex_pos, vertex_color){
@@ -222,6 +285,20 @@ function scanAllPolygon(cxt, polygon, vertex_pos, vertex_color){
     console.log("vertex array:");
     console.log(vertex_array);
     scanAPolygon(cxt, vertex_array, vertex_color[polygon[0][0]]);
+}
+
+// 深克隆
+function deepCopy(value) {
+    if(value instanceof Function)return value
+    else if (value instanceof Array) {
+        var newValue = []
+        for (let i = 0; i < value.length; ++i) newValue[i] = deepCopy(value[i])
+        return newValue
+    } else if (value instanceof Object) {
+        var newValue = {}
+        for (let i in value) newValue[i] = deepCopy(value[i])
+        return newValue
+    } else return value
 }
 
 export {scanAPolygon, scanAllPolygon};
