@@ -22,9 +22,9 @@ function selectPoint(mouse_pos, vertex_pos, radius=10){
 }
 
 function mouseDownListener(event){
-    console.log("mousedown");
+
     ondrag = selectPoint([event.offsetX, event.offsetY], config.vertex_pos);
-    console.log(ondrag);
+
     //选中某点
     if(ondrag != null){
         c.onmousemove = dragPoint;
@@ -32,7 +32,7 @@ function mouseDownListener(event){
 }
 
 function mouseUpListener(event){
-    console.log(ondrag);
+
     //放开某点
     if(ondrag != null){
         c.onmousemove = null;
