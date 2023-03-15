@@ -72,10 +72,10 @@ function drawLine(cxt,x1,y1,x2,y2,color){
 
 function drawAllLines(cxt, polygon, vertex_pos){
     for (let i = 0; i < polygon.length; i++) {
-        let rect = polygon[i];
-        for (let j = 0; j < 4; j++) {
-            let startPointIndex = rect[j%4];
-            let endPointIndex = rect[(j+1)%4];
+        let poly = polygon[i];
+        for (let j = 0; j < poly.length; j++) {
+            let startPointIndex = poly[j%poly.length];
+            let endPointIndex = poly[(j+1)%(poly.length)];
             drawLine(cxt, vertex_pos[startPointIndex][0], vertex_pos[startPointIndex][1],
                 vertex_pos[endPointIndex][0], vertex_pos[endPointIndex][1],
                 [0, 0, 0]);
