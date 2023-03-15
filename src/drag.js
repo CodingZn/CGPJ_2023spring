@@ -43,14 +43,18 @@ function mouseUpListener(event){
 
 //拖拽一个点的事件函数
 function dragPoint(event){
-    //更新点坐标
-    config.vertex_pos[ondrag] = [event.offsetX, event.offsetY, 0];
+    //不允许出界
+    if (event.offsetX >= 0 && event.offsetY >= 0 &&
+        event.offsetX < config.canvasSize.maxX && event.offsetY < config.canvasSize.maxY){
+        //更新点坐标
+        config.vertex_pos[ondrag] = [event.offsetX, event.offsetY, 0];
 
-    //重新画
-    cxt.clearRect(0, 0, c.width, c.height);
-    scanAllPolygon(cxt, config.polygon, config.vertex_pos, config.vertex_color);
-    drawAllLines(cxt, config.polygon, config.vertex_pos);
-    drawAllPoints(cxt, config.vertex_pos, config.vertex_color);
+        //重新画
+        cxt.clearRect(0, 0, c.width, c.height);
+        scanAllPolygon(cxt, config.polygon, config.vertex_pos, config.vertex_color);
+        drawAllLines(cxt, config.polygon, config.vertex_pos);
+        drawAllPoints(cxt, config.vertex_pos, config.vertex_color);
+    }
 }
 
 export {mouseDownListener, mouseUpListener};

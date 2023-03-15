@@ -278,11 +278,20 @@ function scanAPolygon(cxt, vertex_array, color){
     }
     for (let i = 0; i < edgeArray.length; i++) {
         let edge1 = edgeArray[i%edgeArray.length], edge2 = edgeArray[(i+1)%edgeArray.length];
-        if (edge1.ymin === edge2.ymax){
+        if (edge1.ymin === edge2.ymax){// 扫描线穿过内外两侧，将y值低的一边ymax减一
             edge2.ymax--;
+            if (edge2.ymax === edge2.ymin){// 剔除掉经过调整之后变平行了的边
+                let i = edgeArray.indexOf(edge2);
+                edgeArray.splice(i, 1);
+            }
+
         }
         else if (edge1.ymax === edge2.ymin){
             edge1.ymax--;
+            if (edge1.ymax === edge1.ymin){
+                let i = edgeArray.indexOf(edge1);
+                edgeArray.splice(i, 1);
+            }
         }
     }
     for (let i = 0; i < edgeArray.length; i++) {
