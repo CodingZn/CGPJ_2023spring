@@ -268,13 +268,26 @@ class EdgeTable{
 function scanAPolygon(cxt, vertex_array, color){
     // set edgeTable
     var edgeTable = new EdgeTable();
+    let edgeArray = new Array(Edge);
     let n = vertex_array.length;
     for (let i = 0; i < n; i++) {
         let start_point = vertex_array[i%n], end_point = vertex_array[(i+1)%n];
         if (start_point[1] === end_point[1])//略过水平线
             continue;
         let edge = new Edge(start_point[0], start_point[1], end_point[0], end_point[1]);
-        edgeTable.addEdge(edge);
+        edgeArray.push(edge);
+    }
+    for (let i = 0; i < edgeArray.length; i++) {
+        let edge1 = edgeArray[i%edgeArray.length], edge2 = edgeArray[(i+1)%edgeArray.length];
+        if (edge1.ymin === edge2.ymax){
+            edge2.ymax--;
+        }
+        else if (edge1.ymax === edge2.ymin){
+            edge1.ymax--;
+        }
+    }
+    for (let i = 0; i < edgeArray.length; i++) {
+        edgeTable.addEdge(edgeArray[i]);
     }
     // fill
     edgeTable.fill(cxt, color);
@@ -290,18 +303,5 @@ function scanAllPolygon(cxt, polygon, vertex_pos, vertex_color){
     scanAPolygon(cxt, vertex_array, vertex_color[polygon[0][0]]);
 }
 
-// 深克隆
-function deepCopy(value) {
-    if(value instanceof Function)return value
-    else if (value instanceof Array) {
-        var newValue = []
-        for (let i = 0; i < value.length; ++i) newValue[i] = deepCopy(value[i])
-        return newValue
-    } else if (value instanceof Object) {
-        var newValue = {}
-        for (let i in value) newValue[i] = deepCopy(value[i])
-        return newValue
-    } else return value
-}
 
 export {scanAPolygon, scanAllPolygon};
