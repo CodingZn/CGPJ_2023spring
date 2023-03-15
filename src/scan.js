@@ -294,13 +294,15 @@ function scanAPolygon(cxt, vertex_array, color){
 }
 
 function scanAllPolygon(cxt, polygon, vertex_pos, vertex_color){
-    let vertex_array = [];
-    for (let i = 0; i < polygon[0].length; i++) {
-        vertex_array.push(vertex_pos[polygon[0][i]]);
+    for (let j = 0; j < polygon.length; j++) {
+        let vertex_array = [];
+        for (let i = 0; i < polygon[j].length; i++) {
+            vertex_array.push(vertex_pos[polygon[j][i]]);
+        }
+        console.log("vertex array:");
+        console.log(vertex_array);
+        scanAPolygon(cxt, vertex_array, vertex_color[polygon[j][0]]);
     }
-    console.log("vertex array:");
-    console.log(vertex_array);
-    scanAPolygon(cxt, vertex_array, vertex_color[polygon[0][0]]);
 }
 
 

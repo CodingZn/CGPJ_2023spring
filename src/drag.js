@@ -1,5 +1,7 @@
 import {distance, drawAllLines, drawAllPoints} from "./func.js";
 import * as config from "./config.js";
+import {scanAllPolygon} from "./scan.js";
+import {polygon, vertex_color, vertex_pos} from "./config.js";
 
 var c=document.getElementById("myCanvas");
 var cxt=c.getContext("2d");
@@ -46,6 +48,7 @@ function dragPoint(event){
 
     //重新画
     cxt.clearRect(0, 0, c.width, c.height);
+    scanAllPolygon(cxt, config.polygon, config.vertex_pos, config.vertex_color);
     drawAllLines(cxt, config.polygon, config.vertex_pos);
     drawAllPoints(cxt, config.vertex_pos, config.vertex_color);
 }

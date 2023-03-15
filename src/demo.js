@@ -12,9 +12,9 @@ cxt.translate(0.5, 0.5);
 c.width = config.canvasSize.maxX;
 c.height = config.canvasSize.maxY;
 
+scanAllPolygon(cxt, polygon, vertex_pos, vertex_color);
 drawAllLines(cxt, config.polygon, config.vertex_pos);
 drawAllPoints(cxt, config.vertex_pos, config.vertex_color);
-scanAllPolygon(cxt, polygon, vertex_pos, vertex_color);
 
 c.onmousedown = mouseDownListener;
 c.onmouseup = mouseUpListener;
