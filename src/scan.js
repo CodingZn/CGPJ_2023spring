@@ -267,7 +267,7 @@ class EdgeTable{
 function scanAPolygon(cxt, vertex_array, color){
     // set edgeTable
     var edgeTable = new EdgeTable();
-    let edgeArray = new Array(Edge);
+    let edgeArray = [];
     let n = vertex_array.length;
     for (let i = 0; i < n; i++) {
         let start_point = vertex_array[i%n], end_point = vertex_array[(i+1)%n];
