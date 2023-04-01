@@ -1,4 +1,3 @@
-let webgl = document.getElementById("webgl");
 //表示当前是否正在拖拽某点
 let ondrag = null;
 
@@ -46,5 +45,5 @@ function dragPoint(event){
         vertex_pos[ondrag] = [event.offsetX, event.offsetY, 0];
     }
     //重新画
-
+    draw();
 }

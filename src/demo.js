@@ -1,7 +1,3 @@
-function xyConvert(canvasPos, canvasSize){
-    return [2 * canvasPos[0]/canvasSize.maxX - 1, (-2) * canvasPos[1]/canvasSize.maxY + 1, canvasPos[2]];
-}
-
 // Vertex shader program
 var VSHADER_SOURCE =
     'attribute vec4 a_Position;\n' +
@@ -17,11 +13,12 @@ var FSHADER_SOURCE =
     '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
     '}\n';
 
+var webgl = document.getElementById("webgl");
+var gl = getWebGLContext(webgl);
+
 function main(){
-    var webgl = document.getElementById("webgl");
     webgl.width = canvasSize.maxX;
     webgl.height = canvasSize.maxY;
-    var gl = getWebGLContext(webgl);
     if (!gl) {
         console.log('Failed to get the rendering context for WebGL');
         return;
@@ -39,21 +36,23 @@ function main(){
         console.log('Failed to get the storage location of a_Position');
         return;
     }
-
     // Specify the color for clearing <canvas>
     gl.clearColor(0, 0, 0, 1);
-
-    // Clear <canvas>
-    gl.clear(gl.COLOR_BUFFER_BIT);
-
-    drawPoints(gl);
-    drawRects(gl);
+    draw();
 
     webgl.onmousedown = mouseDownListener;
     webgl.onmouseup = mouseUpListener;
 }
 
-function drawRects(gl){
+function draw(){
+    // Clear <canvas>
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    drawPoints();
+    drawRects();
+}
+
+function drawRects(){
     for (let poly of polygon) {
         var vertex_pos_ = [];
         vertex_pos_.push(vertex_pos[poly[0]]);
@@ -70,7 +69,7 @@ function drawRects(gl){
     }
 }
 
-function drawPoints(gl){
+function drawPoints(){
     // Write the positions of vertices to a vertex shader
     var n = initVertexBuffers(gl, vertex_pos);
     if (n < 0) {
