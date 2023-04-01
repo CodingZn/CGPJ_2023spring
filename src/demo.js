@@ -36,14 +36,6 @@ function main(){
         return;
     }
 
-    // Get the storage location of a_Position
-    var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
-    var a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
-    gl.vertexAttrib1f(a_PointSize, 9.0);
-    if (a_Position < 0) {
-        console.log('Failed to get the storage location of a_Position');
-        return;
-    }
     // Specify the color for clearing <canvas>
     gl.clearColor(0, 0, 0, 1);
     draw();
@@ -118,7 +110,6 @@ function drawPoints(){
         return;
     }
 
-    // Draw three points
     gl.drawArrays(gl.POINTS, 0, n);
 }
 
@@ -141,6 +132,9 @@ function initVertexBuffers(gl, arr, n) {
     var FSIZE = vertices.BYTES_PER_ELEMENT;
 
     var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+    // Get the storage location of a_Position
+    var a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+    gl.vertexAttrib1f(a_PointSize, 9.0);
     if (a_Position < 0) {
         console.log('Failed to get the storage location of a_Position');
         return -1;
