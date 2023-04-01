@@ -2,15 +2,22 @@
 var VSHADER_SOURCE =
     'attribute vec4 a_Position;\n' +
     'attribute float a_PointSize;\n' + // attribute variable
+    'attribute vec4 a_Color;\n' +
+    'varying vec4 v_Color;' +
     'void main() {\n' +
     '  gl_Position = a_Position;\n' +
     '  gl_PointSize = a_PointSize;\n' +
+    '  v_Color = a_Color;\n' +
     '}\n';
 
 // Fragment shader program
 var FSHADER_SOURCE =
+    // '#ifdef GL_ES\n' +
+    'precision mediump float;\n' + // Precision qualifier (See Chapter 6)
+    // '#endif GL_ES\n' +
+    'varying vec4 v_Color;\n' +    // Receive the data from the vertex shader
     'void main() {\n' +
-    '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
+    '  gl_FragColor = v_Color;\n' +
     '}\n';
 
 var webgl = document.getElementById("webgl");
@@ -32,7 +39,7 @@ function main(){
     // Get the storage location of a_Position
     var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
     var a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
-    gl.vertexAttrib1f(a_PointSize, 3.0);
+    gl.vertexAttrib1f(a_PointSize, 9.0);
     if (a_Position < 0) {
         console.log('Failed to get the storage location of a_Position');
         return;
@@ -72,12 +79,17 @@ function drawLines(){
 
 function drawRects(){
     for (let poly of polygon) {
-        let vertex_pos_ = [];
-        vertex_pos_.push(vertex_pos[poly[0]]);
-        vertex_pos_.push(vertex_pos[poly[1]]);
-        vertex_pos_.push(vertex_pos[poly[3]]);
-        vertex_pos_.push(vertex_pos[poly[2]]);
-        let n = initVertexBuffers(gl, vertex_pos_);
+        let arr = [];
+        for (let i in poly){
+            let index = (i<2?poly[i]: poly[5-i]);
+            arr.push(xyConvert(vertex_pos[index], canvasSize)[0]);
+            arr.push(xyConvert(vertex_pos[index], canvasSize)[1]);
+            arr.push(colorConvert(vertex_color[index])[0]);
+            arr.push(colorConvert(vertex_color[index])[1]);
+            arr.push(colorConvert(vertex_color[index])[2]);
+        }
+
+        let n = initVertexBuffers(gl, arr, poly.length);
         if (n < 0) {
             console.log('Failed to set the positions of the vertices');
             return;
@@ -88,8 +100,16 @@ function drawRects(){
 }
 
 function drawPoints(){
+    var arr = [];
+    for (let i in vertex_pos){
+        arr.push(xyConvert(vertex_pos[i], canvasSize)[0]);
+        arr.push(xyConvert(vertex_pos[i], canvasSize)[1]);
+        arr.push(colorConvert(vertex_color[i])[0]);
+        arr.push(colorConvert(vertex_color[i])[1]);
+        arr.push(colorConvert(vertex_color[i])[2]);
+    }
     // Write the positions of vertices to a vertex shader
-    var n = initVertexBuffers(gl, vertex_pos);
+    var n = initVertexBuffers(gl, arr, vertex_pos.length);
     if (n < 0) {
         console.log('Failed to set the positions of the vertices');
         return;
@@ -100,14 +120,8 @@ function drawPoints(){
 }
 
 
-function initVertexBuffers(gl, vertex_pos) {
-    var arr = [];
-    for (let i in vertex_pos){
-        arr.push(xyConvert(vertex_pos[i], canvasSize)[0]);
-        arr.push(xyConvert(vertex_pos[i], canvasSize)[1]);
-    }
+function initVertexBuffers(gl, arr, n) {
     var vertices = new Float32Array(arr);
-    var n = vertex_pos.length; // The number of vertices
 
     // Create a buffer object
     var vertexBuffer = gl.createBuffer();
@@ -121,16 +135,26 @@ function initVertexBuffers(gl, vertex_pos) {
     // Write date into the buffer object
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
+    var FSIZE = vertices.BYTES_PER_ELEMENT;
+
     var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
     if (a_Position < 0) {
         console.log('Failed to get the storage location of a_Position');
         return -1;
     }
     // Assign the buffer object to a_Position variable
-    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
-
-    // Enable the assignment to a_Position variable
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE*5, 0);
     gl.enableVertexAttribArray(a_Position);
+
+    // Get the storage location of a_Position, assign buffer and enable
+    var a_Color = gl.getAttribLocation(gl.program, 'a_Color');
+    if(a_Color < 0) {
+        console.log('Failed to get the storage location of a_Color');
+        return -1;
+    }
+    gl.vertexAttribPointer(a_Color, 3, gl.FLOAT, false, FSIZE * 5, FSIZE * 2);
+    gl.enableVertexAttribArray(a_Color);  // Enable the assignment of the buffer object
+
 
     return n;
 }
