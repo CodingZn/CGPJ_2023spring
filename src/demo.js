@@ -14,7 +14,7 @@ var VSHADER_SOURCE =
 // Fragment shader program
 var FSHADER_SOURCE =
     'void main() {\n' +
-    '  gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);\n' +
+    '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
     '}\n';
 
 function main(){
@@ -38,18 +38,41 @@ function main(){
         return;
     }
 
-    // Write the positions of vertices to a vertex shader
-    var n = initVertexBuffers(gl, vertex_pos);
-    if (n < 0) {
-        console.log('Failed to set the positions of the vertices');
-        return;
-    }
 
     // Specify the color for clearing <canvas>
     gl.clearColor(0, 0, 0, 1);
 
     // Clear <canvas>
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    drawPoints(gl);
+    drawRects(gl);
+}
+
+function drawRects(gl){
+    for (let poly of polygon) {
+        var vertex_pos_ = [];
+        vertex_pos_.push(vertex_pos[poly[0]]);
+        vertex_pos_.push(vertex_pos[poly[1]]);
+        vertex_pos_.push(vertex_pos[poly[3]]);
+        vertex_pos_.push(vertex_pos[poly[2]]);
+        var n = initVertexBuffers(gl, vertex_pos_);
+        if (n < 0) {
+            console.log('Failed to set the positions of the vertices');
+            return;
+        }
+        // Draw three points
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+    }
+}
+
+function drawPoints(gl){
+    // Write the positions of vertices to a vertex shader
+    var n = initVertexBuffers(gl, vertex_pos);
+    if (n < 0) {
+        console.log('Failed to set the positions of the vertices');
+        return;
+    }
 
     // Draw three points
     gl.drawArrays(gl.POINTS, 0, n);
