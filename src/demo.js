@@ -58,16 +58,20 @@ function draw(){
 
     drawPoints();
     drawRects();
+    drawLines();
 }
 
 function drawLines(){
-    for (let poly of polygon) {
-        let vertex_pos_ = [];
-        vertex_pos_.push(vertex_pos[poly[0]]);
-        vertex_pos_.push(vertex_pos[poly[1]]);
-        vertex_pos_.push(vertex_pos[poly[2]]);
-        vertex_pos_.push(vertex_pos[poly[3]]);
-        let n = initVertexBuffers(gl, vertex_pos_);
+    for (let tri of triangle) {
+        let arr = [];
+        for (let index of tri){
+            arr.push(xyConvert(vertex_pos[index], canvasSize)[0]);
+            arr.push(xyConvert(vertex_pos[index], canvasSize)[1]);
+            arr.push(1.0);
+            arr.push(0.0);
+            arr.push(0.0);
+        }
+        let n = initVertexBuffers(gl, arr, 3);
         if (n < 0) {
             console.log('Failed to set the positions of the vertices');
             return;
@@ -78,10 +82,9 @@ function drawLines(){
 }
 
 function drawRects(){
-    for (let poly of polygon) {
+    for (let tri of triangle) {
         let arr = [];
-        for (let i in poly){
-            let index = (i<2?poly[i]: poly[5-i]);
+        for (let index of tri){
             arr.push(xyConvert(vertex_pos[index], canvasSize)[0]);
             arr.push(xyConvert(vertex_pos[index], canvasSize)[1]);
             arr.push(colorConvert(vertex_color[index])[0]);
@@ -89,13 +92,13 @@ function drawRects(){
             arr.push(colorConvert(vertex_color[index])[2]);
         }
 
-        let n = initVertexBuffers(gl, arr, poly.length);
+        let n = initVertexBuffers(gl, arr, tri.length);
         if (n < 0) {
             console.log('Failed to set the positions of the vertices');
             return;
         }
         // Draw three points
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+        gl.drawArrays(gl.TRIANGLES, 0, n);
     }
 }
 
