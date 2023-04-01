@@ -19,6 +19,8 @@ var FSHADER_SOURCE =
 
 function main(){
     var webgl = document.getElementById("webgl");
+    webgl.width = canvasSize.maxX;
+    webgl.height = canvasSize.maxY;
     var gl = getWebGLContext(webgl);
     if (!gl) {
         console.log('Failed to get the rendering context for WebGL');
@@ -38,7 +40,6 @@ function main(){
         return;
     }
 
-
     // Specify the color for clearing <canvas>
     gl.clearColor(0, 0, 0, 1);
 
@@ -47,6 +48,9 @@ function main(){
 
     drawPoints(gl);
     drawRects(gl);
+
+    webgl.onmousedown = mouseDownListener;
+    webgl.onmouseup = mouseUpListener;
 }
 
 function drawRects(gl){
