@@ -32,6 +32,7 @@ function main(){
     // Get the storage location of a_Position
     var a_Position = gl.getAttribLocation(gl.program, 'a_Position');
     var a_PointSize = gl.getAttribLocation(gl.program, 'a_PointSize');
+    gl.vertexAttrib1f(a_PointSize, 3.0);
     if (a_Position < 0) {
         console.log('Failed to get the storage location of a_Position');
         return;
@@ -52,14 +53,31 @@ function draw(){
     drawRects();
 }
 
+function drawLines(){
+    for (let poly of polygon) {
+        let vertex_pos_ = [];
+        vertex_pos_.push(vertex_pos[poly[0]]);
+        vertex_pos_.push(vertex_pos[poly[1]]);
+        vertex_pos_.push(vertex_pos[poly[2]]);
+        vertex_pos_.push(vertex_pos[poly[3]]);
+        let n = initVertexBuffers(gl, vertex_pos_);
+        if (n < 0) {
+            console.log('Failed to set the positions of the vertices');
+            return;
+        }
+        // Draw three points
+        gl.drawArrays(gl.LINE_LOOP, 0, n);
+    }
+}
+
 function drawRects(){
     for (let poly of polygon) {
-        var vertex_pos_ = [];
+        let vertex_pos_ = [];
         vertex_pos_.push(vertex_pos[poly[0]]);
         vertex_pos_.push(vertex_pos[poly[1]]);
         vertex_pos_.push(vertex_pos[poly[3]]);
         vertex_pos_.push(vertex_pos[poly[2]]);
-        var n = initVertexBuffers(gl, vertex_pos_);
+        let n = initVertexBuffers(gl, vertex_pos_);
         if (n < 0) {
             console.log('Failed to set the positions of the vertices');
             return;
