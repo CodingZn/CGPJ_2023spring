@@ -71,22 +71,24 @@ function draw(){
 }
 
 function drawLines(){
-    for (let tri of triangle) {
-        let arr = [];
-        for (let index of tri){
-            arr.push(xyConvert(vertex_pos[index], canvasSize)[0]);
-            arr.push(xyConvert(vertex_pos[index], canvasSize)[1]);
-            arr.push(1.0);
-            arr.push(0.0);
-            arr.push(0.0);
+    if (drawline){
+        for (let tri of triangle) {
+            let arr = [];
+            for (let index of tri){
+                arr.push(xyConvert(vertex_pos[index], canvasSize)[0]);
+                arr.push(xyConvert(vertex_pos[index], canvasSize)[1]);
+                arr.push(1.0);
+                arr.push(0.0);
+                arr.push(0.0);
+            }
+            let n = initVertexBuffers(gl, arr, 3);
+            if (n < 0) {
+                console.log('Failed to set the positions of the vertices');
+                return;
+            }
+            // Draw three points
+            gl.drawArrays(gl.LINE_LOOP, 0, n);
         }
-        let n = initVertexBuffers(gl, arr, 3);
-        if (n < 0) {
-            console.log('Failed to set the positions of the vertices');
-            return;
-        }
-        // Draw three points
-        gl.drawArrays(gl.LINE_LOOP, 0, n);
     }
 }
 

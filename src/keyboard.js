@@ -1,3 +1,4 @@
+var drawline = true;
 function keyUpListener(event){
     var letter = event.key;
     switch (letter.toLowerCase()){
@@ -13,6 +14,7 @@ function keyUpListener(event){
         case 'e':
             break;
         case 'b':
+            drawline = !drawline;
             break;
     }
 }
