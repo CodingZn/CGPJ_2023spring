@@ -49,7 +49,7 @@ function main(){
 
     // Start drawing
     var tick = function() {
-        [currentAngle, currentScale] = animate(currentAngle, currentScale);  // Update the rotation angle
+        animate();  // Update the rotation angle
         draw();   // Draw the triangle
         requestAnimationFrame(tick); // Request that the browser calls tick
     };
