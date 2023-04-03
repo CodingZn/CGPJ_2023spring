@@ -4,8 +4,9 @@ var VSHADER_SOURCE =
     'attribute float a_PointSize;\n' + // attribute variable
     'attribute vec4 a_Color;\n' +
     'varying vec4 v_Color;' +
+    'uniform mat4 u_ModelMatrix;\n' +
     'void main() {\n' +
-    '  gl_Position = a_Position;\n' +
+    '  gl_Position = u_ModelMatrix * a_Position;\n' +
     '  gl_PointSize = a_PointSize;\n' +
     '  v_Color = a_Color;\n' +
     '}\n';
@@ -36,20 +37,41 @@ function main(){
         return;
     }
 
+    // Get storage location of u_ModelMatrix
+    u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
+    if (!u_ModelMatrix) {
+        console.log('Failed to get the storage location of u_ModelMatrix');
+        return;
+    }
+
     // Specify the color for clearing <canvas>
     gl.clearColor(0, 0, 0, 1);
-    draw();
+
+    // Start drawing
+    var tick = function() {
+        [currentAngle, currentScale] = animate(currentAngle, currentScale);  // Update the rotation angle
+        draw();   // Draw the triangle
+        requestAnimationFrame(tick); // Request that the browser calls tick
+    };
+    tick();
+
 
     webgl.onmousedown = mouseDownListener;
     webgl.onmouseup = mouseUpListener;
 }
 
 function draw(){
+    modelMatrix.setScale(currentScale,currentScale,currentScale);
+    modelMatrix.rotate(currentAngle, 0, 0, 1);
+
+    // Pass the rotation matrix to the vertex shader
+    gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+
     // Clear <canvas>
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    drawPoints();
     drawRects();
+    drawPoints();
     drawLines();
 }
 
