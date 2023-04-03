@@ -10,12 +10,13 @@ var u_ModelMatrix;
 
 var request_id = null;
 
-// Last time that this function was called
-var g_start = Date.now();
+// start time of playing animation
+var g_start;
+var duration = 0.0;
 
 function animate() {
     var now = Date.now();
-    var t = now - g_start;
+    var t = now - g_start + duration;
     // Update the current rotation angle (adjusted by the elapsed time)
     currentAngle = ((45 * t) / 1000.0) % 360;
     currentScale = 0.2 + 0.2 * Math.abs((t/1000.0) % 8 - 4);

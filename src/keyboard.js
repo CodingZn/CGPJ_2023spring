@@ -4,10 +4,13 @@ function keyUpListener(event){
     switch (letter.toLowerCase()){
         case 't':
             if (request_id){
+                let now = Date.now();
+                duration += now - g_start;
                 cancelAnimationFrame(request_id);
                 request_id = null;
             }
             else {
+                g_start = Date.now();
                 tick();
             }
             break;

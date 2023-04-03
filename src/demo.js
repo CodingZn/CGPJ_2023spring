@@ -47,6 +47,7 @@ function main(){
     // Specify the color for clearing <canvas>
     gl.clearColor(0, 0, 0, 1);
 
+    g_start = Date.now();
     tick();
 
 
@@ -114,22 +115,25 @@ function drawRects(){
 }
 
 function drawPoints(){
-    var arr = [];
-    for (let i in vertex_pos){
-        arr.push(xyConvert(vertex_pos[i], canvasSize)[0]);
-        arr.push(xyConvert(vertex_pos[i], canvasSize)[1]);
-        arr.push(colorConvert(vertex_color[i])[0]);
-        arr.push(colorConvert(vertex_color[i])[1]);
-        arr.push(colorConvert(vertex_color[i])[2]);
-    }
-    // Write the positions of vertices to a vertex shader
-    var n = initVertexBuffers(gl, arr, vertex_pos.length);
-    if (n < 0) {
-        console.log('Failed to set the positions of the vertices');
-        return;
+    if (drawline){
+        var arr = [];
+        for (let i in vertex_pos){
+            arr.push(xyConvert(vertex_pos[i], canvasSize)[0]);
+            arr.push(xyConvert(vertex_pos[i], canvasSize)[1]);
+            arr.push(colorConvert(vertex_color[i])[0]);
+            arr.push(colorConvert(vertex_color[i])[1]);
+            arr.push(colorConvert(vertex_color[i])[2]);
+        }
+        // Write the positions of vertices to a vertex shader
+        var n = initVertexBuffers(gl, arr, vertex_pos.length);
+        if (n < 0) {
+            console.log('Failed to set the positions of the vertices');
+            return;
+        }
+
+        gl.drawArrays(gl.POINTS, 0, n);
     }
 
-    gl.drawArrays(gl.POINTS, 0, n);
 }
 
 
