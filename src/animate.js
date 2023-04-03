@@ -8,6 +8,8 @@ var modelMatrix = new Matrix4();
 
 var u_ModelMatrix;
 
+var request_id = null;
+
 // Last time that this function was called
 var g_start = Date.now();
 
@@ -18,4 +20,10 @@ function animate() {
     currentAngle = ((45 * t) / 1000.0) % 360;
     currentScale = 0.2 + 0.2 * Math.abs((t/1000.0) % 8 - 4);
 
+}
+// Start drawing
+function tick() {
+    animate();  // Update the rotation angle
+    draw();   // Draw the triangle
+    request_id = requestAnimationFrame(tick); // Request that the browser calls tick
 }

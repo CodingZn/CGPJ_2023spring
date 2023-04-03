@@ -47,17 +47,12 @@ function main(){
     // Specify the color for clearing <canvas>
     gl.clearColor(0, 0, 0, 1);
 
-    // Start drawing
-    var tick = function() {
-        animate();  // Update the rotation angle
-        draw();   // Draw the triangle
-        requestAnimationFrame(tick); // Request that the browser calls tick
-    };
     tick();
 
 
     webgl.onmousedown = mouseDownListener;
     webgl.onmouseup = mouseUpListener;
+    window.onkeyup = keyUpListener;
 }
 
 function draw(){
