@@ -47,9 +47,7 @@ function main(){
     // Specify the color for clearing <canvas>
     gl.clearColor(0, 0, 0, 1);
 
-    g_start = Date.now();
-    tick();
-
+    draw();   // Draw the triangle
 
     webgl.onmousedown = mouseDownListener;
     webgl.onmouseup = mouseUpListener;
