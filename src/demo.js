@@ -58,8 +58,8 @@ function main(){
 }
 
 function draw(){
-    modelMatrix.setScale(currentScale,currentScale,currentScale);
-    modelMatrix.rotate(currentAngle, 0, 0, 1);
+    // modelMatrix.setScale(matrixScale,matrixScale,matrixScale);
+    modelMatrix.setRotate(currentAngle, 0, 0, 1);
 
     // Pass the rotation matrix to the vertex shader
     gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
@@ -118,7 +118,7 @@ function drawRects(){
 
 function drawPoints(){
     var arr = [];
-    for (let i in vertex_pos){
+    for (let i in converted_vertex_pos){
         arr.push(converted_vertex_pos[i][0]);
         arr.push(converted_vertex_pos[i][1]);
         arr.push(converted_vertex_color[i][0]);
@@ -126,7 +126,7 @@ function drawPoints(){
         arr.push(converted_vertex_color[i][2]);
     }
     // Write the positions of vertices to a vertex shader
-    var n = initVertexBuffers(gl, arr, vertex_pos.length);
+    var n = initVertexBuffers(gl, arr, converted_vertex_pos.length);
     if (n < 0) {
         console.log('Failed to set the positions of the vertices');
         return;

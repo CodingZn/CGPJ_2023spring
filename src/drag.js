@@ -7,10 +7,10 @@ function distance(x1, y1, x2, y2){
 
 //给定鼠标坐标，根据范围选择点；返回点的下标。如果没有点被选中，返回null。
 //如果有多个点在范围内，优先选择下标最大的点。
-function selectPoint(mouse_pos, vertex_pos, radius=10){
+function selectPoint(mouse_pos, radius=10/canvasSize.maxX){
     let p;
-    for (p = vertex_pos.length - 1; p >= 0; p--) {
-        let point = vertex_pos[p];
+    for (p = converted_vertex_pos.length - 1; p >= 0; p--) {
+        let point = converted_vertex_pos[p];
         if (distance(point[0], point[1], mouse_pos[0], mouse_pos[1]) <= radius)
             return p;
     }
@@ -19,7 +19,7 @@ function selectPoint(mouse_pos, vertex_pos, radius=10){
 
 function mouseDownListener(event){
 
-    ondrag = selectPoint([event.offsetX, event.offsetY], vertex_pos);
+    ondrag = selectPoint(xyConvert([event.offsetX, event.offsetY]));
     //选中某点
     if(ondrag != null){
         webgl.onmousemove = dragPoint;
@@ -37,12 +37,13 @@ function mouseUpListener(event){
 
 //拖拽一个点的事件函数，在拖拽整个过程中始终执行
 function dragPoint(event){
+
     //不允许出界
     if (event.offsetX >= 0 && event.offsetY >= 0 &&
         event.offsetX < canvasSize.maxX && event.offsetY < canvasSize.maxY){
         //更新点坐标
-        vertex_pos[ondrag] = [event.offsetX, event.offsetY, 0];
-        convertOnePos(ondrag);
+        converted_vertex_pos[ondrag] = xyConvert([event.offsetX, event.offsetY, 0]);
+
     }
     //重新画
     draw();

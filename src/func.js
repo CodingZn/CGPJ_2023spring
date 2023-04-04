@@ -9,10 +9,6 @@ function convertAllPos(){
     }
 }
 
-function convertOnePos(index){
-    converted_vertex_pos[index] = xyConvert(vertex_pos[index]);
-}
-
 function colorConvert(color){
     return [color[0]/255, color[1]/255, color[2]/255];
 }
@@ -22,10 +18,6 @@ function convertAllColor(){
     for (let vertex of vertex_color) {
         converted_vertex_color.push(colorConvert(vertex));
     }
-}
-
-function convertOneColor(index){
-    converted_vertex_color[index] = colorConvert(vertex_pos[index]);
 }
 
 function splitPolyToTriangle(polygon){
