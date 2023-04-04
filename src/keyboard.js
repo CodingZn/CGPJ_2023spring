@@ -1,6 +1,6 @@
 var drawline = true;
 function keyUpListener(event){
-    var letter = event.key;
+    let letter = event.key;
     switch (letter.toLowerCase()){
         case 't':
             if (request_id){
@@ -18,6 +18,7 @@ function keyUpListener(event){
             break;
         case 'b':
             drawline = !drawline;
+            draw();
             break;
     }
 }

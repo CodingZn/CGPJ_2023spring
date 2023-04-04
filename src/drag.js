@@ -27,7 +27,6 @@ function mouseDownListener(event){
 }
 
 function mouseUpListener(event){
-
     //放开某点
     if(ondrag != null){
         webgl.onmousemove = null;
@@ -43,6 +42,7 @@ function dragPoint(event){
         event.offsetX < canvasSize.maxX && event.offsetY < canvasSize.maxY){
         //更新点坐标
         vertex_pos[ondrag] = [event.offsetX, event.offsetY, 0];
+        convertOnePos(ondrag);
     }
     //重新画
     draw();

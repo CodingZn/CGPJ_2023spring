@@ -47,6 +47,9 @@ function main(){
     // Specify the color for clearing <canvas>
     gl.clearColor(0, 0, 0, 1);
 
+    convertAllPos();
+    convertAllColor();
+
     draw();   // Draw the triangle
 
     webgl.onmousedown = mouseDownListener;
@@ -65,41 +68,42 @@ function draw(){
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     drawRects();
-    drawPoints();
-    drawLines();
+    if (drawline){
+        drawPoints();
+        drawLines();
+    }
 }
 
 function drawLines(){
-    if (drawline){
-        for (let tri of triangle) {
-            let arr = [];
-            for (let index of tri){
-                arr.push(xyConvert(vertex_pos[index], canvasSize)[0]);
-                arr.push(xyConvert(vertex_pos[index], canvasSize)[1]);
-                arr.push(1.0);
-                arr.push(0.0);
-                arr.push(0.0);
-            }
-            let n = initVertexBuffers(gl, arr, 3);
-            if (n < 0) {
-                console.log('Failed to set the positions of the vertices');
-                return;
-            }
-            // Draw three points
-            gl.drawArrays(gl.LINE_LOOP, 0, n);
+    for (let tri of triangle) {
+        let arr = [];
+        for (let index of tri){
+            arr.push(converted_vertex_pos[index][0]);
+            arr.push(converted_vertex_pos[index][1]);
+            arr.push(1.0);
+            arr.push(0.0);
+            arr.push(0.0);
         }
+        let n = initVertexBuffers(gl, arr, 3);
+        if (n < 0) {
+            console.log('Failed to set the positions of the vertices');
+            return;
+        }
+        // Draw three points
+        gl.drawArrays(gl.LINE_LOOP, 0, n);
     }
+
 }
 
 function drawRects(){
     for (let tri of triangle) {
         let arr = [];
         for (let index of tri){
-            arr.push(xyConvert(vertex_pos[index], canvasSize)[0]);
-            arr.push(xyConvert(vertex_pos[index], canvasSize)[1]);
-            arr.push(colorConvert(vertex_color[index])[0]);
-            arr.push(colorConvert(vertex_color[index])[1]);
-            arr.push(colorConvert(vertex_color[index])[2]);
+            arr.push(converted_vertex_pos[index][0]);
+            arr.push(converted_vertex_pos[index][1]);
+            arr.push(converted_vertex_color[index][0]);
+            arr.push(converted_vertex_color[index][1]);
+            arr.push(converted_vertex_color[index][2]);
         }
 
         let n = initVertexBuffers(gl, arr, tri.length);
@@ -113,25 +117,22 @@ function drawRects(){
 }
 
 function drawPoints(){
-    if (drawline){
-        var arr = [];
-        for (let i in vertex_pos){
-            arr.push(xyConvert(vertex_pos[i], canvasSize)[0]);
-            arr.push(xyConvert(vertex_pos[i], canvasSize)[1]);
-            arr.push(colorConvert(vertex_color[i])[0]);
-            arr.push(colorConvert(vertex_color[i])[1]);
-            arr.push(colorConvert(vertex_color[i])[2]);
-        }
-        // Write the positions of vertices to a vertex shader
-        var n = initVertexBuffers(gl, arr, vertex_pos.length);
-        if (n < 0) {
-            console.log('Failed to set the positions of the vertices');
-            return;
-        }
-
-        gl.drawArrays(gl.POINTS, 0, n);
+    var arr = [];
+    for (let i in vertex_pos){
+        arr.push(converted_vertex_pos[i][0]);
+        arr.push(converted_vertex_pos[i][1]);
+        arr.push(converted_vertex_color[i][0]);
+        arr.push(converted_vertex_color[i][1]);
+        arr.push(converted_vertex_color[i][2]);
+    }
+    // Write the positions of vertices to a vertex shader
+    var n = initVertexBuffers(gl, arr, vertex_pos.length);
+    if (n < 0) {
+        console.log('Failed to set the positions of the vertices');
+        return;
     }
 
+    gl.drawArrays(gl.POINTS, 0, n);
 }
 
 
