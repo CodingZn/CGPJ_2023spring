@@ -2,11 +2,12 @@
 // Current rotation angle
 var currentAngle = 0.0;
 
-// //当前坐标点条件下，对应原图scale
-// var innerScale = 1.0;
-//
-// //需要乘的scale
-// var matrixScale = 1.0;
+// 当前坐标点条件下，对应原图scale
+var innerScale = 1.0;
+
+//本来应该有的scale
+var matrixScale = 1.0;
+
 // Model matrix
 var modelMatrix = new Matrix4();
 
@@ -24,7 +25,7 @@ function animate() {
     var t2 = now - g_start;
     // Update the current rotation angle (adjusted by the elapsed time)
     currentAngle = ((45 * t2) / 1000.0) % 360;
-    // matrixScale = (0.2 + 0.2 * Math.abs((t/1000.0) % 8 - 4))/innerScale;
+    matrixScale = (0.2 + 0.2 * Math.abs((t/1000.0) % 8 - 4));
 
 }
 // Start drawing
@@ -34,7 +35,7 @@ function tick() {
     request_id = requestAnimationFrame(tick); // Request that the browser calls tick
 }
 
-function storeCurrentPos(){
+function storeCurrentPos(){console.log("inner:"+innerScale+"; matrix:" + matrixScale);
     let newpos;
     let vec3;
     for (let i in converted_vertex_pos) {
@@ -44,6 +45,5 @@ function storeCurrentPos(){
     }
     modelMatrix.setIdentity();
     currentAngle = 0;
-    // innerScale = matrixScale;
-    // matrixScale = 1.0;
+    innerScale = matrixScale;
 }

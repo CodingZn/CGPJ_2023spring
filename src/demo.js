@@ -58,8 +58,9 @@ function main(){
 }
 
 function draw(){
-    // modelMatrix.setScale(matrixScale,matrixScale,matrixScale);
-    modelMatrix.setRotate(currentAngle, 0, 0, 1);
+    let multiScale = matrixScale/innerScale;
+    modelMatrix.setScale(multiScale,multiScale,multiScale);
+    modelMatrix.rotate(currentAngle, 0, 0, 1);
 
     // Pass the rotation matrix to the vertex shader
     gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
