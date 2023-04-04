@@ -35,7 +35,7 @@ function tick() {
     request_id = requestAnimationFrame(tick); // Request that the browser calls tick
 }
 
-function storeCurrentPos(){console.log("inner:"+innerScale+"; matrix:" + matrixScale);
+function storeCurrentPos(){
     let newpos;
     let vec3;
     for (let i in converted_vertex_pos) {

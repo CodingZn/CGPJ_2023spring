@@ -76,29 +76,35 @@ function draw(){
 }
 
 function drawLines(){
+    let arr = [];
     for (let tri of triangle) {
-        let arr = [];
-        for (let index of tri){
+        for (let i=0; i<tri.length; i++){
+            let index = tri[i], index2 = tri[(i+1)%tri.length];
             arr.push(converted_vertex_pos[index][0]);
             arr.push(converted_vertex_pos[index][1]);
             arr.push(1.0);
             arr.push(0.0);
             arr.push(0.0);
+            arr.push(converted_vertex_pos[index2][0]);
+            arr.push(converted_vertex_pos[index2][1]);
+            arr.push(1.0);
+            arr.push(0.0);
+            arr.push(0.0);
         }
-        let n = initVertexBuffers(gl, arr, 3);
-        if (n < 0) {
-            console.log('Failed to set the positions of the vertices');
-            return;
-        }
-        // Draw three points
-        gl.drawArrays(gl.LINE_LOOP, 0, n);
     }
+    let n = initVertexBuffers(gl, arr, triangle.length * 6);
+    if (n < 0) {
+        console.log('Failed to set the positions of the vertices');
+        return;
+    }
+    // Draw three points
+    gl.drawArrays(gl.LINES, 0, n);
 
 }
 
 function drawRects(){
+    let arr = [];
     for (let tri of triangle) {
-        let arr = [];
         for (let index of tri){
             arr.push(converted_vertex_pos[index][0]);
             arr.push(converted_vertex_pos[index][1]);
@@ -106,15 +112,14 @@ function drawRects(){
             arr.push(converted_vertex_color[index][1]);
             arr.push(converted_vertex_color[index][2]);
         }
-
-        let n = initVertexBuffers(gl, arr, tri.length);
-        if (n < 0) {
-            console.log('Failed to set the positions of the vertices');
-            return;
-        }
-        // Draw three points
-        gl.drawArrays(gl.TRIANGLES, 0, n);
     }
+    let n = initVertexBuffers(gl, arr, triangle.length * 3);
+    if (n < 0) {
+        console.log('Failed to set the positions of the vertices');
+        return;
+    }
+    // Draw three points
+    gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 
 function drawPoints(){
