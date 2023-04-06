@@ -7,6 +7,7 @@ function distance(x1, y1, x2, y2){
 
 //给定鼠标坐标，根据范围选择点；返回点的下标。如果没有点被选中，返回null。
 //如果有多个点在范围内，优先选择下标最大的点。
+//在webgl坐标系下，默认选择范围为以画布长为标准的10像素椭圆
 function selectPoint(mouse_pos, radius=10/canvasSize.maxX){
     let p;
     for (p = converted_vertex_pos.length - 1; p >= 0; p--) {

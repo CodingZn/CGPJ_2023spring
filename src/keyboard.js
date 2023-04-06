@@ -1,4 +1,6 @@
+// 边框绘制的控制变量
 var drawline = true;
+// 按键事件函数
 function keyUpListener(event){
     let letter = event.key;
     switch (letter.toLowerCase()){
@@ -6,6 +8,7 @@ function keyUpListener(event){
             T_pressed();
             break;
         case 'e':
+            // 当前正在播放动画时，停止动画并存储顶点信息，与按下t键一致；否则不操作
             if (request_id)
                 T_pressed();
             break;

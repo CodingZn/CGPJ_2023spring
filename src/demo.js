@@ -50,17 +50,15 @@ function main(){
     convertAllPos();
     convertAllColor();
 
-    draw();   // Draw the triangle
+    draw();
 
     webgl.onmousedown = mouseDownListener;
     webgl.onmouseup = mouseUpListener;
     window.onkeyup = keyUpListener;
 }
 
+// 绘制图像操作，需在开始和每次更新图像时调用
 function draw(){
-    let multiScale = matrixScale/innerScale;
-    modelMatrix.setScale(multiScale,multiScale,multiScale);
-    modelMatrix.rotate(currentAngle, 0, 0, 1);
 
     // Pass the rotation matrix to the vertex shader
     gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
@@ -69,15 +67,19 @@ function draw(){
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     drawRects();
+    // 根据变量判断是否绘制边框
     if (drawline){
         drawPoints();
         drawLines();
     }
 }
 
+// 绘制边框函数
 function drawLines(){
     let arr = [];
+    //一次性添加所有顶点信息
     for (let tri of triangle) {
+        //采用LINES划线方法，手动添加每个三角形的三条边起点和终点
         for (let i=0; i<tri.length; i++){
             let index = tri[i], index2 = tri[(i+1)%tri.length];
             arr.push(converted_vertex_pos[index][0]);
@@ -97,13 +99,14 @@ function drawLines(){
         console.log('Failed to set the positions of the vertices');
         return;
     }
-    // Draw three points
+    // 绘制
     gl.drawArrays(gl.LINES, 0, n);
 
 }
 
 function drawRects(){
     let arr = [];
+    //一次性添加所有三角形，采用TRIANGLES绘制方法，填充所有
     for (let tri of triangle) {
         for (let index of tri){
             arr.push(converted_vertex_pos[index][0]);
@@ -141,7 +144,7 @@ function drawPoints(){
     gl.drawArrays(gl.POINTS, 0, n);
 }
 
-
+// arr为顶点坐标+颜色的信息，以2+3的格式排列
 function initVertexBuffers(gl, arr, n) {
     var vertices = new Float32Array(arr);
 
